@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Start tmux session
-tmux new-session -d -s journal 'tail -f journal.txt'
+tmux new-session -d -s journal 
+tmux send-keys -t 0 'clear; tail -f journal.txt | nl -w4 -s"   "' Enter
 
 # Split the top screen vertically and run 'tail -f' on journal.txt
 tmux split-window -v 
@@ -35,6 +36,27 @@ tmux send-keys -t 1 "./append_to_journal.sh" C-m
 # Select the third screen
 tmux select-pane -t 2
 
+# Create the append_to_journal.sh script
+cat <<EOF > lineremove.sh
+#!/bin/bash
+
+# Check if a line number is provided
+if [ -z "$1" ]; then
+    echo "Usage: lineremove.sh <line-number>"
+    exit 1
+fi
+
+# The line number to be removed
+line_number=$1
+
+# Remove the specified line from journal.txt
+sed -i "${line_number}d" journal.txt
+EOF
+
+# Give execute permission to the append_to_journal.sh script
+chmod +x lineremove.sh
+
+
 # Create the command_handler.sh script
 cat <<EOF > command_handler.sh
 #!/bin/bash
@@ -44,6 +66,8 @@ display_commands() {
     echo "Available Commands:"
     echo "  quit - Exit application"
     echo "  date - Append current date to journal"
+    echo "  remove n - Remove nth line number"
+    echo "  refresh - refresh app"
     echo
 }
 
@@ -61,8 +85,31 @@ while true; do
             break
             ;;
         date)
-            echo -e "\n\033[7m\$(date '+%A %B %d')\033[0m" >> journal.txt # this invert word box
+            echo -e " \n\033[7m\$(date '+%A %B %d')\033[0m" >> journal.txt # this invert word box
             # echo -e "\033[31m\$(date '+%A %B %d')\033[0m" >> journal.txt # this change color of text
+            ;;
+        remove*)
+            line_number=\$(echo "\$cmd" | cut -d ' ' -f2)
+            if ! [[ \$line_number =~ ^[0-9]+$ ]]; then
+                echo "Invalid line number"
+            else
+                # Check for OS type and apply appropriate sed command
+                if [[ "\$(uname)" == "Darwin" ]]; then
+                    sed -i '' "\${line_number}d" journal.txt
+                else
+                    sed -i "\${line_number}d" journal.txt
+                fi
+                
+                # Refresh the tail -f pane
+                tmux send-keys -t 0 C-c 'clear; tail -f journal.txt | nl -w4 -s"   "' C-m
+            fi
+            ;;
+        refresh)
+            # Refresh the tail -f pane
+            tmux send-keys -t 0 C-c 'clear; tail -f journal.txt | nl -w4 -s"   "' C-m
+            
+            # Refresh pane 1 (Journal Entry Input)
+            tmux send-keys -t 1 C-c "clear; ./append_to_journal.sh" C-m
             ;;
         *)
             echo "Unknown command: \$cmd"
