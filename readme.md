@@ -62,4 +62,4 @@ Feel free to fork the repository and submit pull requests.
 
 ## Author
 
-[Your Name]
+Danh Tran
