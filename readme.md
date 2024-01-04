@@ -1,6 +1,6 @@
 # Tmux Journal App
 
-A simple, terminal-based journaling application using Tmux for managing multiple panes. It allows adding entries, viewing the journal, and deleting specific entries.
+A simple, terminal-based journaling application leveraging Tmux. It allows adding entries, viewing the journal, and deleting specific entries.
 
 ## Features
 
