@@ -14,19 +14,20 @@ A simple, terminal-based journaling application leveraging Tmux. It allows addin
 1. **Clone Repository**: Clone this repository to your local machine.
 2. **Edit Start Directory**: Redefine DIR variable to point to the same directory as the journal.sh script.
 3. **Initial Setup**: Run the provided setup script to initialize the application.
-4. **Aliasing**: Launch app through journal command by appending to the .bash_profile -- aliasing journal='{path}/journal.sh'
-
+4. **Aliasing**: Launch app through journal command by appending to the .bash_profile -- aliasing journal='{path}/start_journal_app.sh'
 
 ## Usage
 
 ### Starting the App
 
 - Run `./start_journal_app.sh` to start the Tmux session with all panes configured.
+  or
+- Type journal command to launch if already aliased.
 
 ### Using the App
 
 - **Main Pane**: Shows the real-time view of your journal.
-- **Entry Addition Pane**: Add new journal entries. Type 'exit' to stop adding entries.
+- **Entry Addition Pane**: Add new journal entries.
 - **Command Handler Pane**: Enter commands to interact with the journal.
 
 #### Commands
@@ -40,6 +41,7 @@ A simple, terminal-based journaling application leveraging Tmux. It allows addin
 
 - **Journal Directory**: Set the journal directory in the `start_journal_app.sh` script.
 - **Journal File**: By default, `journal.txt` is used. Change this in the script if needed.
+- **Aliasing**: Improve convenience by aliasing to journal command. Change this in the .bash_profile if needed.
 
 ## Dependencies
 
@@ -61,11 +63,3 @@ Feel free to fork the repository and submit pull requests.
 ## Author
 
 [Your Name]
-
-
-
-
-
-
-
-
