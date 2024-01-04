@@ -40,12 +40,12 @@ while true; do
                 fi
                 
                 # Refresh the tail -f pane
-                tmux send-keys -t 0 C-c 'clear; tail -f journal.txt | nl -w4 -s"   "' C-m
+                tmux send-keys -t 0 C-c 'clear; tail -f -n 10000 journal.txt | nl -w4 -s"   "' C-m
             fi
             ;;
         refresh)
             # Refresh the tail -f pane
-            tmux send-keys -t 0 C-c 'clear; tail -f journal.txt | nl -w4 -s"   "' C-m
+            tmux send-keys -t 0 C-c 'clear; tail -f -n 10000 journal.txt | nl -w4 -s"   "' C-m
             
             # Refresh pane 1 (Journal Entry Input)
             tmux send-keys -t 1 C-c "clear; ./append_to_journal.sh" C-m
