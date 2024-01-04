@@ -1,8 +1,10 @@
 #!/bin/bash
 
+DIR="."
+
 # Start tmux session
 tmux new-session -d -s journal 
-tmux send-keys -t 0 'clear; tail -f journal.txt | nl -w4 -s"   "' Enter
+tmux send-keys -t 0 'cd $DIR; clear; tail -f -n 10000 journal.txt | nl -w4 -s"   "' Enter
 
 # Split the top screen vertically and run 'tail -f' on journal.txt
 tmux split-window -v 
@@ -101,12 +103,12 @@ while true; do
                 fi
                 
                 # Refresh the tail -f pane
-                tmux send-keys -t 0 C-c 'clear; tail -f journal.txt | nl -w4 -s"   "' C-m
+                tmux send-keys -t 0 C-c 'clear; tail -f -n 10000 journal.txt | nl -w4 -s"   "' C-m
             fi
             ;;
         refresh)
             # Refresh the tail -f pane
-            tmux send-keys -t 0 C-c 'clear; tail -f journal.txt | nl -w4 -s"   "' C-m
+            tmux send-keys -t 0 C-c 'clear; tail -f -n 10000 journal.txt | nl -w4 -s"   "' C-m
             
             # Refresh pane 1 (Journal Entry Input)
             tmux send-keys -t 1 C-c "clear; ./append_to_journal.sh" C-m
