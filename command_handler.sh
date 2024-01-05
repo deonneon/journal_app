@@ -16,7 +16,7 @@ while true; do
     display_commands
 
     # Read command
-    read -p "Enter command: " cmd
+    read -e -p "Enter command: " cmd
 
     case "$cmd" in
         quit)
