@@ -2,7 +2,7 @@
 
 while true; do
     clear
-    read -p "Enter your journal entry: " entry
+    read -e -p "Enter your journal entry: " entry
     if [[ $entry == "exit" ]]; then
         break
     fi

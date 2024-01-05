@@ -4,7 +4,7 @@ DIR="."
 
 # Start tmux session
 tmux new-session -d -s journal 
-tmux send-keys -t 0 'cd $DIR; clear; tail -f -n 10000 journal.txt | nl -w4 -s"   "' Enter
+tmux send-keys -t 0 "cd $DIR; clear; tail -f -n 10000 journal.txt | nl -w4 -s\"   \"" Enter
 
 # Split the top screen vertically and run 'tail -f' on journal.txt
 tmux split-window -v 
@@ -21,7 +21,7 @@ cat <<EOF > append_to_journal.sh
 
 while true; do
     clear
-    read -p "Enter your journal entry: " entry
+    read -e -p "Enter your journal entry: " entry
     if [[ \$entry == "exit" ]]; then
         break
     fi
