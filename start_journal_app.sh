@@ -5,6 +5,8 @@ DIR="."
 # Start tmux session
 tmux new-session -d -s journal 
 tmux set-option -t journal:0.0 mode-keys vi # Make pane 0 read-only
+# Setting pane background color
+#tmux select-pane -t 0 -P 'bg=black'
 tmux send-keys -t 0 "cd $DIR; clear; tail -f -n 10000 journal.txt | nl -w4 -s\"   \"" Enter
 
 # Split the top screen vertically and run 'tail -f' on journal.txt
