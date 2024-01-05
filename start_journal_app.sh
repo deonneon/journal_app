@@ -4,6 +4,10 @@ DIR="."
 
 # Start tmux session
 tmux new-session -d -s journal 
+
+# Source session config
+tmux source-file session.tmux.conf
+
 tmux set-option -t journal:0.0 mode-keys vi # Make pane 0 read-only
 # Setting pane background color
 #tmux select-pane -t 0 -P 'bg=black'
