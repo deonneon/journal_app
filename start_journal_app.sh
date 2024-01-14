@@ -4,8 +4,9 @@ DIR="."
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 
 # Start tmux session
+tmux kill-session -t journal
 tmux new-session -d -s journal 
-tmux set-hook -t journal session-closed "run-shell 'rm -f append_to_journal.sh lineremove.sh command_handler.sh'"
+tmux set-hook -t journal session-closed "run-shell 'rm -f $SCRIPT_DIR/append_to_journal.sh $SCRIPT_DIR/lineremove.sh $SCRIPT_DIR/command_handler.sh'"
 
 # Source session config
 tmux source-file session.tmux.conf
@@ -27,7 +28,7 @@ tmux split-window -h
 tmux select-pane -t 1
 
 # Create the append_to_journal.sh script
-cat <<EOF > append_to_journal.sh
+cat <<EOF > $SCRIPT_DIR/append_to_journal.sh
 #!/bin/bash
 
 while true; do
@@ -41,21 +42,21 @@ done
 EOF
 
 # Give execute permission to the append_to_journal.sh script
-chmod +x append_to_journal.sh
+chmod +x $SCRIPT_DIR/append_to_journal.sh
 
 # Run the append_to_journal.sh script in the middle screen
-tmux send-keys -t 1 "./append_to_journal.sh" C-m
+tmux send-keys -t 1 "$SCRIPT_DIR/append_to_journal.sh" C-m
 
 # Select the third screen
 tmux select-pane -t 2
 
 # Create the append_to_journal.sh script
-cat <<EOF > lineremove.sh
+cat <<EOF > $SCRIPT_DIR/lineremove.sh
 #!/bin/bash
 
 # Check if a line number is provided
 if [ -z "$1" ]; then
-    echo "Usage: lineremove.sh <line-number>"
+    echo "Usage: $SCRIPT_DIR/lineremove.sh <line-number>"
     exit 1
 fi
 
@@ -67,11 +68,11 @@ sed -i "${line_number}d" $SCRIPT_DIR/journal.txt
 EOF
 
 # Give execute permission to the append_to_journal.sh script
-chmod +x lineremove.sh
+chmod +x $SCRIPT_DIR/lineremove.sh
 
 
 # Create the command_handler.sh script
-cat <<EOF > command_handler.sh
+cat <<EOF > $SCRIPT_DIR/command_handler.sh
 #!/bin/bash
 
 # Function to display commands
@@ -122,7 +123,7 @@ while true; do
             tmux send-keys -t 0 C-c 'clear; tail -f -n 10000 $SCRIPT_DIR/journal.txt | nl -w4 -s"   "' C-m
             
             # Refresh pane 1 (Journal Entry Input)
-            tmux send-keys -t 1 C-c "clear; ./append_to_journal.sh" C-m
+            tmux send-keys -t 1 C-c "clear; $SCRIPT_DIR/append_to_journal.sh" C-m
             ;;
         *)
             echo "Unknown command: \$cmd"
@@ -135,10 +136,10 @@ done
 EOF
 
 # Give execute permission to the command_handler.sh script
-chmod +x command_handler.sh
+chmod +x $SCRIPT_DIR/command_handler.sh
 
 # Run the command_handler.sh script in the third screen
-tmux send-keys -t 2 "./command_handler.sh" C-m
+tmux send-keys -t 2 "$SCRIPT_DIR/command_handler.sh" C-m
 
 # Attach to the tmux session
 tmux attach-session -t journal
