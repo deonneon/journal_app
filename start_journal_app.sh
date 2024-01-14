@@ -1,9 +1,11 @@
 #!/bin/bash
 
 DIR="."
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 
 # Start tmux session
 tmux new-session -d -s journal 
+tmux set-hook -t journal session-closed "run-shell 'rm -f append_to_journal.sh lineremove.sh command_handler.sh'"
 
 # Source session config
 tmux source-file session.tmux.conf
@@ -11,7 +13,7 @@ tmux source-file session.tmux.conf
 tmux set-option -t journal:0.0 mode-keys vi # Make pane 0 read-only
 # Setting pane background color
 #tmux select-pane -t 0 -P 'bg=black'
-tmux send-keys -t 0 "cd $DIR; clear; tail -f -n 10000 journal.txt | nl -w4 -s\"   \"" Enter
+tmux send-keys -t 0 "cd $DIR; clear; tail -f -n 10000 $SCRIPT_DIR/journal.txt | nl -w4 -s\"   \"" Enter
 # Lock top panel
 tmux select-pane -d
 
@@ -34,7 +36,7 @@ while true; do
     if [[ \$entry == "exit" ]]; then
         break
     fi
-    echo "\$entry" >> journal.txt
+    echo "\$entry" >> $SCRIPT_DIR/journal.txt
 done
 EOF
 
@@ -60,8 +62,8 @@ fi
 # The line number to be removed
 line_number=$1
 
-# Remove the specified line from journal.txt
-sed -i "${line_number}d" journal.txt
+# Remove the specified line from $SCRIPT_DIR/journal.txt
+sed -i "${line_number}d" $SCRIPT_DIR/journal.txt
 EOF
 
 # Give execute permission to the append_to_journal.sh script
@@ -96,8 +98,8 @@ while true; do
             break
             ;;
         date)
-            echo -e " \n\033[7m\$(date '+%A %B %d')\033[0m" >> journal.txt # this invert word box
-            # echo -e "\033[31m\$(date '+%A %B %d')\033[0m" >> journal.txt # this change color of text
+            echo -e " \n\033[7m\$(date '+%A %B %d')\033[0m" >> $SCRIPT_DIR/journal.txt # this invert word box
+            # echo -e "\033[31m\$(date '+%A %B %d')\033[0m" >> $SCRIPT_DIR/journal.txt # this change color of text
             ;;
         remove*)
             line_number=\$(echo "\$cmd" | cut -d ' ' -f2)
@@ -106,18 +108,18 @@ while true; do
             else
                 # Check for OS type and apply appropriate sed command
                 if [[ "\$(uname)" == "Darwin" ]]; then
-                    sed -i '' "\${line_number}d" journal.txt
+                    sed -i '' "\${line_number}d" $SCRIPT_DIR/journal.txt
                 else
-                    sed -i "\${line_number}d" journal.txt
+                    sed -i "\${line_number}d" $SCRIPT_DIR/journal.txt
                 fi
                 
                 # Refresh the tail -f pane
-                tmux send-keys -t 0 C-c 'clear; tail -f -n 10000 journal.txt | nl -w4 -s"   "' C-m
+                tmux send-keys -t 0 C-c 'clear; tail -f -n 10000 $SCRIPT_DIR/journal.txt | nl -w4 -s"   "' C-m
             fi
             ;;
         refresh)
             # Refresh the tail -f pane
-            tmux send-keys -t 0 C-c 'clear; tail -f -n 10000 journal.txt | nl -w4 -s"   "' C-m
+            tmux send-keys -t 0 C-c 'clear; tail -f -n 10000 $SCRIPT_DIR/journal.txt | nl -w4 -s"   "' C-m
             
             # Refresh pane 1 (Journal Entry Input)
             tmux send-keys -t 1 C-c "clear; ./append_to_journal.sh" C-m
