@@ -2,6 +2,9 @@
 
 A simple, terminal-based journaling application leveraging Tmux. It allows adding entries, viewing the journal, and deleting specific entries.
 
+<img width="937" alt="Jouranl App Screenshot" src="https://github.com/deonneon/tmux_journal_app/assets/13922212/74ddf138-64c0-4e92-8f2e-de459b0ee1dd">
+
+
 ## Features
 
 - **Real-time Journal Viewing**: Continuously tails the journal file, displaying updates as they happen.
